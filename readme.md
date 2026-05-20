@@ -16,7 +16,7 @@ A lightweight, fully portable autoclicker built for speed and simplicity.
 
 
 ### 2nd Build — 20/05/2026 • 22:38
-- Status: Successful
+- Status: Failed to Run, library import errors with UPX 5.1.1
 - Output: `GhostClick.exe`
 - File Size: 9.07 MB (9,076 KB)
 
