@@ -7,8 +7,8 @@ from pynput.keyboard import Listener, Key, Controller as KeyboardController
 class GhostClickApp: 
     def __init__(self,root):
         self.root = root
-        self.root.title("GhostClick v1")
-        self.root.geometry("300x360") 
+        self.root.title("GhostClick v1.1")
+        self.root.geometry("460x220") 
         self.root.resizable(False,False)
         
         self.root.attributes("-topmost", True)
@@ -23,7 +23,7 @@ class GhostClickApp:
         self.keyboard = KeyboardController()
         
         # setting_vars
-        self.click_delay = 0.05
+        self.current_delay = 0.05
         self.current_action = "Left Click"
         self.current_key = "e"
         
@@ -32,58 +32,76 @@ class GhostClickApp:
         self.status_label = tk.Label(
             root, 
             text="STATUS: INACTIVE", 
-            fg="#f38ba8", 
+            fg="#FF0000", 
             bg="#1e1e2e",
             font=("Arial", 14, "bold")
         )
-        self.status_label.pack(pady=10)
+        self.status_label.pack(pady=(15,5))
 
         # Settings Frame
         settings_frame = tk.Frame(root, bg="#1e1e2e")
-        settings_frame.pack(pady=5)
+        settings_frame.pack(pady=10, padx=20, fill="x")
+        
+        # settings_frame.columnconfigure(0, weight=1)
+        # settings_frame.columnconfigure(1, weight=1)
 
-        # Dropdown Lst
+        # ROW 0 
+        
+        # Action Label (COL 0)
         tk.Label(
             settings_frame, 
-            text="Action", 
+            text="Action:", 
             fg="#cdd6f4", 
             bg="#1e1e2e",
-            font=("Arial", 10)).grid(row=0, column=0, sticky="e", pady=5, padx=5)
+            font=("Arial", 10, "bold")).grid(row=0, column=0, sticky="e", pady=5, padx=(0,5))
         
-        self.action_var = tk.StringVar("LeftClick")
+        # Dropdown Lst COL 1
+        self.action_var = tk.StringVar(value="Left Click")
         self.action_menu = tk.OptionMenu(settings_frame, self.action_var, "Left Click", "Right Click", "Middle Click", "Key Press")
-        self.action_menu.config(bg="#313244", fg="#cdd6f4", highlightthickness=0)
-        self.action_menu.grid(row=0, column=0,sticky="w",pady=5)
+        self.action_menu.config(bg="#313244", fg="#cdd6f4", highlightthickness=0, width=12, activebackground="#34375a", activeforeground="#cdd6f4")
+        self.action_menu.grid(row=0, column=1,sticky="w",pady=5, padx=(0,25))
         
+        # COl 2
         # Key Press ka input
         tk.Label(
             settings_frame,
             text="Key to Tap:",
             fg="#cdd6f4",
             bg="#1e1e2e",
-            font=("Arial", 10)).grid(row=1, column=0, sticky="e", pady=5, padx=5)
-
-        self.key_entry = tk.Entry(settings_frame, textvariable=self.key_var, width=5, bg="#313244", fg="#cdd6f4", insertbackground="white", state="disabled")
-        self.key_entry.grid(row=1, column=1, sticky="w", pady=5)
+            font=("Arial", 10, "bold")).grid(row=0, column=2, sticky="e", pady=5, padx=(0,5))
+        self.key_var  = tk.StringVar(value="e")
         
+        # KEY PRESS (COL 3)
+        self.key_entry = tk.Entry(settings_frame, 
+                                textvariable=self.key_var, 
+                                width=10, 
+                                bg="#313244", 
+                                fg="#cdd6f4", 
+                                insertbackground="white", 
+                                state="disabled", 
+                                justify="center")
+        self.key_entry.grid(row=0, column=3, sticky="w", pady=5)
         
+    # ROW 1
         # Delay input by (ms)
         tk.Label(
             settings_frame,
             text="Delay (ms):",
             fg="#cdd6f4",
             bg="#1e1e2e",
-            font=("Arial",10)).grid(row=1,column=0,sticky='e',padx=5,pady=5)
+            font=("Arial",10, "bold")).grid(row=1,column=2,sticky='e',pady=5, padx=(10,5))
 
-        self.delay_var=tk.StringVar(value="50")
+        # Delay Entry (COL 3)
+        self.delay_var=tk.StringVar(value="10")
         self.delay_entry = tk.Entry(
                                     settings_frame, 
                                     textvariable=self.delay_var,
-                                    width=8,
-                                    bg="#313244",
-                                    fg="#cdd6f4",
-                                    insertbackground="white")
-        self.delay_entry.grid(row=2,column=1,sticky="w",pady=5)
+                                    width=10,
+                                    bg="#ffffff",
+                                    fg="#000000",
+                                    insertbackground="white",
+                                    justify="center")
+        self.delay_entry.grid(row=1,column=3,sticky="w",pady=5)
         
         
         # More listeners
@@ -100,7 +118,7 @@ class GhostClickApp:
                             bg="#1e1e2e",
                             font=("Arial", 10, "bold")
                         )
-        self.info_label.pack(pady=15)
+        self.info_label.pack(side="bottom",pady=(0,15))
 
         # Handles clicking logic so the GUI doesn't freeze
         self.click_thread = threading.Thread(target=self.clicker_loop)
@@ -164,9 +182,9 @@ class GhostClickApp:
     def toggle_clicking(self):
         self.clicking = not self.clicking
         if self.clicking:
-            self.status_label.config(text="Status: Active", fg="#a6e3a1")
+            self.status_label.config(text="Status: Active", fg="#72db68")
         else:
-            self.status_label.config(text="Status: Inactive", fg="#f38ba8")
+            self.status_label.config(text="Status: Inactive", fg="#FF0000")
     
     def close_application(self):
         self.clicking = False
