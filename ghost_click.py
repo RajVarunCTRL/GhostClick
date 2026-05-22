@@ -25,7 +25,8 @@ THEMES = {
         "hover_bg": "#45475a",       
         "status_active": "#a6e3a1",  
         "status_inactive": "#f38ba8",
-        "footer_fg": "#a6adc8"
+        "footer_fg": "#a6adc8",
+        "credits" : "#86ffc8"
     },
     
     "light": {
@@ -35,17 +36,19 @@ THEMES = {
         "hover_bg": "#ccd0da",
         "status_active": "#40a02b",
         "status_inactive": "#d20f39",
-        "footer_fg": "#8c8fa1"
+        "footer_fg": "#8c8fa1",
+        "credits" : "#000000"
     },
     
     "full_dark": {
-        "bg": "#000000",             # Pure black
-        "fg": "#ffffff",             # Pure white text
-        "input_bg": "#111111",       # Very dark grey so you can see the boxes
-        "hover_bg": "#222222",       # Slightly lighter grey for hovering
-        "status_active": "#00ff00",  # Bright green
-        "status_inactive": "#ff3333",# Bright red
-        "footer_fg": "#888888"       # Dim grey for the footer text
+        "bg": "#000000",             
+        "fg": "#ffffff",             
+        "input_bg": "#111111",       
+        "hover_bg": "#222222",       
+        "status_active": "#00ff00",  
+        "status_inactive": "#ff3333",
+        "footer_fg": "#888888",       
+        "credits" : "#86ffc8"
     }
 }
 
@@ -168,6 +171,14 @@ class GhostClickApp:
         self.key_var.trace_add("write", self.update_settings)
         self.delay_var.trace_add("write", self.update_settings)
         
+        self.credit_label = tk.Label(
+            root, 
+            text = "Made with care by Raj Varun",
+            fg=self.theme["credits"],
+            bg=self.theme["bg"],
+            font=("Arial", 10, "italic")
+        )
+        self.credit_label.pack(side="bottom", pady=(0,5))
         
         
         self.info_label = tk.Label(
@@ -212,6 +223,12 @@ class GhostClickApp:
         
     def clicker_loop(self):
         while self.program_running :
+            try:
+                if self.credit_label.cget("text") != "Made with care by Raj Varun":
+                    time.sleep(1)
+                    continue
+            except Exception:
+                break
             if self.clicking :
                 if self.current_action == "Left Click":
                     self.mouse.click(Button.left, 1)
