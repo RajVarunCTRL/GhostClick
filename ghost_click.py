@@ -55,7 +55,7 @@ THEMES = {
 class GhostClickApp: 
     def __init__(self,root):
         self.root = root
-        self.root.title("GhostClick v1.2")
+        self.root.title("GhostClick v1.3")
         self.root.geometry("460x220") 
         self.root.resizable(False,False)
         
@@ -260,7 +260,7 @@ class GhostClickApp:
         if self.clicking:
             self.status_label.config(text="Status: Active", fg=self.theme["status_active"])
         else:
-            self.status_label.config(text="Status: Inactive", fg="status_inactive")
+            self.status_label.config(text="Status: Inactive", fg=self.theme["status_inactive"])
     
     def close_application(self):
         self.clicking = False
