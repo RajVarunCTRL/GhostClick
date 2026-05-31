@@ -55,7 +55,7 @@ THEMES = {
 class GhostClickApp: 
     def __init__(self,root):
         self.root = root
-        self.root.title("GhostClick v1.4")
+        self.root.title("GhostClick v1.4.1")
         self.root.geometry("460x220") 
         self.root.resizable(False,False)
         
@@ -237,6 +237,8 @@ class GhostClickApp:
         self.is_rebinding = True
         self.rebind_btn.config(text="Recording...", fg = self.theme["status_inactive"])
         
+        self.root.focus_set() # delays(ms) tb steals the focus, fix for that ig.
+         
     def get_key_name(self,key):
         if hasattr(key,"char") and key.char is not None:
             return str(key.char).upper()
