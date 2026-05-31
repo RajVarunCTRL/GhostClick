@@ -55,7 +55,7 @@ THEMES = {
 class GhostClickApp: 
     def __init__(self,root):
         self.root = root
-        self.root.title("GhostClick v1.3")
+        self.root.title("GhostClick v1.4")
         self.root.geometry("460x220") 
         self.root.resizable(False,False)
         
@@ -71,6 +71,10 @@ class GhostClickApp:
         # bools
         self.clicking = False
         self.program_running = True 
+        
+        # Hotkey vars
+        self.is_rebinding = False
+        self.start_stop_key = Key.f8
         
         # Controllers
         self.mouse = Controller()
@@ -143,8 +147,33 @@ class GhostClickApp:
                             state="disabled", justify="center"
                         )
         self.key_entry.grid(row=0, column=3, sticky="w", pady=5)
+    
+    # ROW 1 (COL 0 & 1)
+    
+        tk.Label(
+            settings_frame,
+            text="Start Hotkey:",
+            fg=self.theme["fg"], 
+            bg=self.theme["bg"], 
+            font=("Arial", 10, "bold")).grid(row=1, column=0, sticky="e", pady=5, padx=(0,5)
+        )
+            
+        # rebind Button
+        self.rebind_btn = tk.Button(
+            settings_frame, 
+            text="[ F8 ]", 
+            bg=self.theme["input_bg"], 
+            fg=self.theme["status_active"],
+            activebackground=self.theme["hover_bg"], 
+            activeforeground=self.theme["status_active"],
+            width=10, relief="flat", cursor="hand2", command=self.trigger_rebind
+        )
+        self.rebind_btn.grid(row=1, column=1, sticky="w", pady=5, padx=(0,25))
+            
         
     # ROW 1
+
+    
         # Delay input by (ms)
         tk.Label(
             settings_frame,
@@ -204,6 +233,16 @@ class GhostClickApp:
         
     # Methods for Ghost Click 
     
+    def trigger_rebind(self):
+        self.is_rebinding = True
+        self.rebind_btn.config(text="Recording...", fg = self.theme["status_inactive"])
+        
+    def get_key_name(self,key):
+        if hasattr(key,"char") and key.char is not None:
+            return str(key.char).upper()
+        else:
+            return str(key).replace("Key.", "").replace("'","").upper()
+    
     def update_settings(self, *args):
         """Update internal variables safely."""
         self.current_action = self.action_var.get()
@@ -249,13 +288,38 @@ class GhostClickApp:
             #     time.sleep(0.01)
                 
     def on_press(self, key):
-        if key == Key.f8:
+        if self.is_rebinding:
+            if key != Key.f9:
+                self.start_stop_key = key
+            
+            self.is_rebinding = False
+            key_name = self.get_key_name(self.start_stop_key)
+            
+           
+            # update GUI from background thread.
+            
+            self.root.after(0, lambda: self.rebind_btn.config(
+                text=f"[ {key_name} ]", fg=self.theme["status_active"]
+            ))
+            self.root.after(0, lambda: self.info_label.config(
+                text=f"Press [ {key_name} ] to Start / Stop\nPress [ F9 ] to Exit App"
+            ))
+            return
+        
+        # Handle clicker
+        if key == self.start_stop_key:
             self.toggle_clicking()
         elif key == Key.f9:
             self.root.after(0, self.close_application)
+        
+        # if key == Key.f8:
+        #     self.toggle_clicking()
+        # elif key == Key.f9:
+        #     self.root.after(0, self.close_application)
             
             
     def toggle_clicking(self):
+        if self.is_rebinding: return
         self.clicking = not self.clicking
         if self.clicking:
             self.status_label.config(text="Status: Active", fg=self.theme["status_active"])
